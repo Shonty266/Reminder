@@ -1,24 +1,26 @@
 import requests
-import json
+import logging
 
-def handler(request):
-    # Get chat ID and message from the request body (for flexibility)
-    chat_id = "1498839589"  # Example chat ID
-    bot_token = "7946011547:AAF_8ZNDZISi5SbhQNXkGXUFIGgc4JEbAvw"
-    message = "Please avoid talking to your brother for now."
+logging.basicConfig(level=logging.DEBUG)
 
-    # Send the message via Telegram Bot API
+def send_telegram_message():
+    bot_token = "your-bot-token"
+    chat_id = "your-chat-id"
+    message = "This is a periodic reminder message."
+
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     payload = {"chat_id": chat_id, "text": message}
-    response = requests.post(url, data=payload)
 
-    if response.status_code == 200:
-        return {
-            "statusCode": 200,
-            "body": json.dumps({"message": "Message sent successfully!"})
-        }
-    else:
-        return {
-            "statusCode": 400,
-            "body": json.dumps({"error": f"Failed to send message: {response.text}"})
-        }
+    try:
+        response = requests.post(url, data=payload)
+        logging.debug(f"Response: {response.status_code}, {response.text}")
+
+        if response.status_code == 200:
+            logging.info("Message sent successfully!")
+        else:
+            logging.error(f"Failed to send message: {response.status_code}, {response.text}")
+    except Exception as e:
+        logging.error(f"Error sending message: {str(e)}")
+
+if __name__ == "__main__":
+    send_telegram_message()
